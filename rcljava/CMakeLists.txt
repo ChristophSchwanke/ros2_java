@@ -13,6 +13,7 @@ find_package(rcljava_common REQUIRED)
 find_package(rmw REQUIRED)
 find_package(rmw_implementation_cmake REQUIRED)
 
+include("string_camel_case_to_lower_case_underscore.cmake")
 include(CrossCompilingExtra)
 
 if(CMAKE_CROSSCOMPILING)
@@ -35,7 +36,7 @@ if(NOT WIN32)
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-set(CMAKE_JAVA_COMPILE_FLAGS "-source" "1.6" "-target" "1.6")
+set(CMAKE_JAVA_COMPILE_FLAGS "-source" "21" "-target" "21")
 
 include_directories(include)
 
