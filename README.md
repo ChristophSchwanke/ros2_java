@@ -122,8 +122,8 @@ Although the `ros2_java_android.repos` file contains all the repositories for th
         mkdir -p $HOME/ros2_android_ws/src
         cd $HOME/ros2_android_ws
         curl https://raw.githubusercontent.com/ChristophSchwanke/ros2_java/main/ros2_java_android.repos > repo.repos
-        curl https://raw.githubusercontent.com/ChristophSchwanke/ros2_java/main/ros2_java_android.repos > compile.sh
-        curl https://raw.githubusercontent.com/ChristophSchwanke/ros2_java/main/ros2_java_android.repos > updateGit.sh
+        curl https://raw.githubusercontent.com/ChristophSchwanke/ros2_java/main/compile.sh > compile.sh
+        curl https://raw.githubusercontent.com/ChristophSchwanke/ros2_java/main/updateGit.sh > updateGit.sh
         ./updateGit.sh
 
 1. Possibly edit Android build configuration in compile.sh:
