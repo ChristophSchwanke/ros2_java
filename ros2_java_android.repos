@@ -177,7 +177,7 @@ repositories:
     version: main
   ros2-java/ros2_java:
     type: git
-    url: https://github.com/ros2-java/ros2_java.git
+    url: https://github.com/ChristophSchwanke/ros2_java.git
     version: main
   ros2-java/ros2_android:
     type: git

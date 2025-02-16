@@ -10,7 +10,6 @@
 
 colcon build \
    --packages-ignore cyclonedds rcl_logging_log4cxx rosidl_generator_py performance_test_fixture  \
-   --packages-above rcl \
    --packages-up-to rcljava \
    --cmake-args \
    -DBUILD_TESTING=0 \
