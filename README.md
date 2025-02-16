@@ -40,11 +40,13 @@ The current set of features include:
 
 ## Sounds great, how can I try this out?
 
+Note that "Install dependencies" applies for Java 2 on Desktop (x86) and Android (arm-ABI), whereas the following sections are exclusive for their respective architecture.
+
 ### Install dependencies
 
-> Note: While the following instructions use a Linux shell the same can be done on other platforms like Windows with slightly adjusted commands.
+> Note: While the following instructions use a Linux shell the same can be done on other platforms like Windows with slightly adjusted commands. Java, the JDK and Gradle can also be done via Android Studio.
 
-1. [Install ROS 2](https://index.ros.org/doc/ros2/Installation).
+1. Only Java Desktop (not Android): [Install ROS 2](https://index.ros.org/doc/ros2/Installation).
 
 1. Install Java and a JDK.
 
@@ -82,7 +84,9 @@ Make sure you have Gradle 3.2 (or later) installed.
         python3 -m pip install -U git+https://github.com/colcon/colcon-gradle
         python3 -m pip install --no-deps -U git+https://github.com/colcon/colcon-ros-gradle
 
-### Download and Build ROS 2 Java for Desktop
+### Download and Build ROS 2 Java for Desktop (see Android below)
+
+Do not execute these steps, if you want to compile for Android / arm-ABI - see below. If you wanted to compile for Android, but already did some steps for Desktop Java (x86), make sure to delete all folders for a fresh start.
 
 1. Source your ROS 2 installation, for example:
 
@@ -109,54 +113,33 @@ Make sure you have Gradle 3.2 (or later) installed.
 
 ### Download and Build ROS 2 Java for Android
 
-The Android setup is slightly more complex, you'll need the SDK and NDK installed, and an Android device where you can run the examples.
-
-Make sure to download at least the SDK for Android Lollipop (or greater), the examples require the API level 21 at least and NDK 14.
-
-You may download the Android NDK from [the official](https://developer.android.com/ndk/downloads/index.html) website, let's assume you've downloaded 16b (the latest stable version as of 2018-04-28) and you unpack it to `~/android_ndk`
-
-We'll also need to have the [Android SDK](https://developer.android.com/studio/#downloads) installed, for example, in `~/android_sdk` and set the `ANDROID_HOME` environment variable pointing to it.
+To compile for Android perform the steps in "Install dependencies". The Android setup is slightly more complex, you'll need the SDK and NDK installed, and an Android device where you can run the examples.
 
 Although the `ros2_java_android.repos` file contains all the repositories for the Android bindings to compile, we'll have to disable certain packages (`python_cmake_module`, `rosidl_generator_py`, `test_msgs`) that are included the repositories and that we either don't need or can't cross-compile properly (e.g. the Python generator)
-
-1. Download the [Android NDK](https://developer.android.com/ndk/downloads/index.html) and set the environment variable `ANDROID_NDK` to the path where it is extracted.
-
-1. Download the [Android SDK](https://developer.android.com/studio/#downloads) and set the environment variable `ANDROID_HOME` to the path where it is extracted.
 
 1. Clone ROS 2 and ROS 2 Java source code:
 
         mkdir -p $HOME/ros2_android_ws/src
         cd $HOME/ros2_android_ws
-        curl https://raw.githubusercontent.com/ros2-java/ros2_java/main/ros2_java_android.repos | vcs import src
+        curl https://raw.githubusercontent.com/ChristophSchwanke/ros2_java/main/ros2_java_android.repos > repo.repos
+        curl https://raw.githubusercontent.com/ChristophSchwanke/ros2_java/main/ros2_java_android.repos > compile.sh
+        curl https://raw.githubusercontent.com/ChristophSchwanke/ros2_java/main/ros2_java_android.repos > updateGit.sh
+        ./updateGit.sh
 
-1. Set Android build configuration:
+1. Possibly edit Android build configuration in compile.sh:
 
         export PYTHON3_EXEC="$( which python3 )"
         export PYTHON3_LIBRARY="$( ${PYTHON3_EXEC} -c 'import os.path; from distutils import sysconfig; print(os.path.realpath(os.path.join(sysconfig.get_config_var("LIBPL"), sysconfig.get_config_var("LDLIBRARY"))))' )"
         export PYTHON3_INCLUDE_DIR="$( ${PYTHON3_EXEC} -c 'from distutils import sysconfig; print(sysconfig.get_config_var("INCLUDEPY"))' )"
-        export ANDROID_ABI=armeabi-v7a
-        export ANDROID_NATIVE_API_LEVEL=android-21
+        export ANDROID_ABI=arm64-v8a
+        export ANDROID_NATIVE_API_LEVEL=android-28
         export ANDROID_TOOLCHAIN_NAME=arm-linux-androideabi-clang
+
+1. Download the [Android SDK](https://developer.android.com/studio/#downloads) and [Android NDK](https://developer.android.com/ndk/downloads/index.html). This can be done with Android Studio or via the provided links. For Linux: If done via Android Studio the SDK will be already be in the right path given in compile.sh and the NDK can be found in "$HOME/Android/Sdk/ndk/". Set the environment variables `ANDROID_HOME` and `ANDROID_NDK` in compile.sh respectively.
 
 1. Build (skipping packages that we don't need or can't cross-compile):
 
-        colcon build \
-          --packages-ignore cyclonedds rcl_logging_log4cxx rosidl_generator_py \
-          --packages-up-to rcljava \
-          --cmake-args \
-          -DPYTHON_EXECUTABLE=${PYTHON3_EXEC} \
-          -DPYTHON_LIBRARY=${PYTHON3_LIBRARY} \
-          -DPYTHON_INCLUDE_DIR=${PYTHON3_INCLUDE_DIR} \
-          -DCMAKE_TOOLCHAIN_FILE=${ANDROID_NDK}/build/cmake/android.toolchain.cmake \
-          -DANDROID_FUNCTION_LEVEL_LINKING=OFF \
-          -DANDROID_NATIVE_API_LEVEL=${ANDROID_NATIVE_API_LEVEL} \
-          -DANDROID_TOOLCHAIN_NAME=${ANDROID_TOOLCHAIN_NAME} \
-          -DANDROID_STL=c++_shared \
-          -DANDROID_ABI=${ANDROID_ABI} \
-          -DANDROID_NDK=${ANDROID_NDK} \
-          -DTHIRDPARTY=ON \
-          -DCOMPILE_EXAMPLES=OFF \
-          -DCMAKE_FIND_ROOT_PATH="${PWD}/install"
+        ./compile.sh
 
 You can find more information about the Android examples at https://github.com/ros2-java/ros2_android_examples
 
