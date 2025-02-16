@@ -1,4 +1,12 @@
-export PERFORMANCE_TEST_FIXTURE_ENABLE_TRACE=0
+ export PERFORMANCE_TEST_FIXTURE_ENABLE_TRACE=0
+ export ANDROID_NDK="$HOME/Android/Sdk/ndk/27.0.12077973"
+ export ANDROID_HOME="$HOME/Android/Sdk"
+ export PYTHON3_EXEC="$( which python3 )"
+ export PYTHON3_LIBRARY="$( ${PYTHON3_EXEC} -c 'import os.path; from distutils import sysconfig; print(os.path.realpath(os.path.join(sysconfig.get_config_var("LIBPL"), sysconfig.get_config_var("LDLIBRARY"))))' )"
+ export PYTHON3_INCLUDE_DIR="$( ${PYTHON3_EXEC} -c 'from distutils import sysconfig; print(sysconfig.get_config_var("INCLUDEPY"))' )"
+ export ANDROID_ABI=arm64-v8a
+ export ANDROID_NATIVE_API_LEVEL=android-28
+ export ANDROID_TOOLCHAIN_NAME=arm-linux-androideabi-clang
 
 colcon build \
    --packages-ignore cyclonedds rcl_logging_log4cxx rosidl_generator_py performance_test_fixture  \
@@ -21,17 +29,3 @@ colcon build \
    -DFORCE_BUILD_VENDOR_PKG=ON \
    -DCMAKE_FIND_ROOT_PATH="${PWD}/install" \
    -DANDROID=ON
-
-   #\
-   #-DBUILD_TESTING=OFF \
-   #-DRCL_LOGGING_IMPLEMENTATION=rcl_logging_noop \
-   #-DCMAKE_FIND_ROOT_PATH="${PWD}/install"
-
-   # -DTHIRDPARTY_android-ifaddrs=FORCE \
-   # rmw_fastrtps_shared_cpp rmw_fastrtps_shared_c rmw_fastrtps_dynamic_cpp rmw_fastrtps_dynamic_c rmw_fastrtps_cpp rmw_fastrtps_c
-
-    #  --packages-up-to rcljava \
-#ament_cmake_libraries
-
-# libyaml_vendor rcl_yaml_param_parser launch_yaml rcl_logging_spdlog
-#
